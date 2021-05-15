@@ -46,7 +46,10 @@ class RecipePage extends StatelessWidget {
     return Container(
       child: Row(
         children: [
-        Image.network('https://tokyo-kitchen.icook.network/uploads/recipe/cover/373636/5dc990636b76eb32.jpg')  ,
+        Image.network(
+            'https://tokyo-kitchen.icook.network/uploads/recipe/cover/373636/5dc990636b76eb32.jpg',
+        scale: 0.5,)  ,
+        titleSection,
         titleSection],
       ),
     );
