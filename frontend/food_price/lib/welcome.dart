@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pickitem.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'dart:ui' as ui;
@@ -292,7 +293,7 @@ class _CenterBoxState extends State<CenterBox> {
   Container buildLeftColumn(String url) {
     String _parseUrl(String oriUrl){
       var reavelUrl = oriUrl.split("url=")[1].split('width=')[0];
-      return 'http://128.199.227.138:9527/' + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
+      return env['CORS_PROXY'] + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
     }
     return Container(
       child: Column(
