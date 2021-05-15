@@ -13,17 +13,6 @@ import itertools
 
 executor = ThreadPoolExecutor(10)
 
-chrome_options = Options()
-#chrome_options.add_argument("--disable-extensions")
-#chrome_options.add_argument("--disable-gpu")
-#chrome_options.add_argument("--no-sandbox") # linux only
-chrome_options.add_argument("--headless")
-# chrome_options.headless = True # also works
-driver = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
-driver2 = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
-momo_crawler = MomoCrawler.MomoCrawler(driver)
-friday_crawler = FridayCrawler.FridayCrawler(driver2)
-
 app = FastAPI()
 
 origins = ["*"]
@@ -43,16 +32,13 @@ def price_per_kg_for_sort(x):
     else:
         return price_per_kg
 
-async def scrape(crawler_name, ingredient_name, loop):
-    results = await loop.run_in_executor(executor, scraper, crawler_name, ingredient_name)
+async def scrape(crawler, ingredient_name, loop):
+    results = await loop.run_in_executor(executor, scraper, crawler, ingredient_name)
 
     return results
 
-def scraper(crawler_name, ingredient_name):
-    if crawler_name == 'momo':
-        results = momo_crawler.get_ingredient_datas(ingredient_name)
-    elif crawler_name == 'friday':
-        results = friday_crawler.get_ingredient_datas(ingredient_name)
+def scraper(crawler, ingredient_name):
+    results = crawler.get_ingredient_datas(ingredient_name)
     
     return results
 
@@ -62,10 +48,20 @@ def read_root():
 
 @app.get("/ingredient/{ingredient_name}")
 def read_ingredients(ingredient_name: str):
+    chrome_options = Options()
+    #chrome_options.add_argument("--disable-extensions")
+    #chrome_options.add_argument("--disable-gpu")
+    #chrome_options.add_argument("--no-sandbox") # linux only
+    chrome_options.add_argument("--headless")
+    # chrome_options.headless = True # also works
+    driver = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
+    driver2 = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
+    momo_crawler = MomoCrawler.MomoCrawler(driver)
+    friday_crawler = FridayCrawler.FridayCrawler(driver2)
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     
-    crawlers = ['momo', 'friday']
+    crawlers = [momo_crawler, friday_crawler]
     tasks = []
     for crawler in crawlers:
         tasks.append(loop.create_task(scrape(crawler, ingredient_name, loop=loop)))
@@ -74,6 +70,9 @@ def read_ingredients(ingredient_name: str):
     ingredients = itertools.chain(*ingredients)
 
     ingredients = sorted(ingredients, key=price_per_kg_for_sort)
+
+    momo_crawler.destroy()
+    friday_crawler.destroy()
 
     return {"ingredients": ingredients}
 
