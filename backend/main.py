@@ -9,6 +9,8 @@ from crawlers import MomoCrawler, FridayCrawler, IcookRecipe, IcookSearch
 import asyncio
 from concurrent.futures.thread import ThreadPoolExecutor
 
+import itertools
+
 executor = ThreadPoolExecutor(10)
 
 chrome_options = Options()
@@ -68,6 +70,8 @@ def read_ingredients(ingredient_name: str):
     for crawler in crawlers:
         tasks.append(loop.create_task(scrape(crawler, ingredient_name, loop=loop)))
     ingredients = loop.run_until_complete(asyncio.gather(*tasks))
+    
+    ingredients = itertools.chain(*ingredients)
 
     ingredients = sorted(ingredients, key=price_per_kg_for_sort)
 
