@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -22,6 +23,16 @@ momo_crawler = MomoCrawler.MomoCrawler(driver)
 friday_crawler = FridayCrawler.FridayCrawler(driver2)
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def price_per_kg_for_sort(x):
     price_per_kg = x['price_per_kg']
