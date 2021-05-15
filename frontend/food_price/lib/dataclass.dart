@@ -9,6 +9,47 @@ import 'package:flutter/material.dart';
 part 'dataclass.g.dart';
 
 @JsonSerializable()
+class RecipeSearch {
+  List<RecipeSummary> recipes;
+
+  RecipeSearch({this.recipes});
+
+  factory RecipeSearch.fromJson(Map<String, dynamic> json) => _$RecipeSearchFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeSearchToJson(this);
+}
+
+@JsonSerializable()
+class RecipeSummary {
+  String url;
+  String name;
+  String description;
+  @JsonKey(name: 'image_url')
+  String imageUrl;
+
+  RecipeSummary({this.url, this.name, this.description, this.imageUrl});
+
+  factory RecipeSummary.fromJson(Map<String, dynamic> json) => _$RecipeSummaryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeSummaryToJson(this);
+}
+
+Future<RecipeSearch> searchRecipes(String name, int page) async {
+  final uri = "${env['RECIPE_API']}?text=$name&page=$page";
+  final response = await http.get(
+    Uri.parse(uri),
+  );
+  if (response.statusCode == 200) {
+    return RecipeSearch.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+  } else {
+    throw HttpException(
+        'Unexpected status code ${response.statusCode}:'
+            ' ${response.reasonPhrase}',
+        uri: Uri.parse(uri));
+  }
+}
+
+@JsonSerializable()
 class Ingredient {
   String name;
   String unit;
