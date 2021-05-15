@@ -15,6 +15,10 @@ class MomoCrawler:
 
         self.driver.get(url) 
 
+        WebDriverWait(self.driver, 30).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li .prdImg'))
+        )
+
         results = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li'))
         )
@@ -82,7 +86,7 @@ if __name__ == "__main__":
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
     #chrome_options.add_argument("--no-sandbox") # linux only
-    chrome_options.add_argument("--headless")
+    # chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
     driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
