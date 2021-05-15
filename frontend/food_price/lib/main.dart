@@ -161,9 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // the App.build method, and use it to set our appbar title.
         title: Text(widget.title),
       ),
-      body: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Column(
+      body: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text(
@@ -176,28 +174,38 @@ class _MyHomePageState extends State<MyHomePage> {
               SizedBox(
                 height: 20,
               ),
-              Expanded(
-                child: _foundUsers.length > 0
+              Flexible(
+                child:  _foundUsers.length > 0
                     ? ListView.builder(
                   itemCount: _foundUsers.length,
                   itemBuilder: (context, index) => Card(
                     key: ValueKey(_foundUsers[index]["id"]),
-                    color: Colors.amberAccent,
+                    color: Colors.white,
                     elevation: 4,
                     margin: EdgeInsets.symmetric(vertical: 10),
-                    child: ListTile(
-                      leading: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: 128,
-                          minHeight: 128,
-                          maxWidth: 256,
-                          maxHeight: 256,
-                        ),
-                        child: Image.network("https://api.allorigins.win/raw?url="+Uri.encodeComponent(_foundUsers[index]['img'])),
+                    child:Padding(
+                      padding: EdgeInsets.all(25.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 22,
+                            child: Image.network("https://api.allorigins.win/raw?url="+Uri.encodeComponent(_foundUsers[index]['img']), fit: BoxFit.cover),
+                          ),
+                          SizedBox(width: 50),
+                          Expanded(
+                            flex: 78,
+                            child: Column(
+                              children: [
+                                Text(_foundUsers[index]['name'],
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                                SizedBox(height: 10),
+                                Text('${_foundUsers[index]["ingredients"]}',
+                                    style: TextStyle(fontSize: 16)),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      title: Text(_foundUsers[index]['name']),
-                      subtitle: Text(
-                          '${_foundUsers[index]["ingredients"]}'),
                     ),
                   ),
                 )
@@ -207,7 +215,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
       ]),
-      ),
     );
   }
 }
