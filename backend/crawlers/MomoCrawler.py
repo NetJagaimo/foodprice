@@ -14,7 +14,7 @@ class MomoCrawler:
 
         self.driver.get(url)
 
-        results = WebDriverWait(self.driver, 10).until(
+        results = WebDriverWait(self.driver, 30).until(
             EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li'))
         )
 
