@@ -2,7 +2,7 @@ import bs4, requests
 
 def getRecipe(url):
     result = {
-        'resipe_detail': []
+        'recipe_detail': []
     }
     agent = {"User-Agent":"Mozilla/5.0"}
     request_result = requests.get(url, headers = agent)
@@ -32,6 +32,6 @@ def getRecipe(url):
             }
             group_item['ingredients'].append(ingredient_item)
         
-        result['resipe_detail'].append(group_item)
+        result['recipe_detail'].append(group_item)
     
     return result
