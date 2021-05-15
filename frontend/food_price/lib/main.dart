@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'recipe.dart';
 import 'welcome.dart';
 
+
 void main() {
   runApp(MyApp());
 }
@@ -57,16 +58,16 @@ class _MyHomePageState extends State<MyHomePage> {
   List<Map<String, dynamic>> _foundUsers = [];
 
   final List<Map<String, dynamic>> _allUsers = [
-    {"id": 1, "name": "Andy", "age": 29},
-    {"id": 2, "name": "Aragon", "age": 40},
-    {"id": 3, "name": "Bob", "age": 5},
-    {"id": 4, "name": "Barbara", "age": 35},
-    {"id": 5, "name": "Candy", "age": 21},
-    {"id": 6, "name": "Colin", "age": 55},
-    {"id": 7, "name": "Audra", "age": 30},
-    {"id": 8, "name": "Banana", "age": 14},
-    {"id": 9, "name": "Caversky", "age": 100},
-    {"id": 10, "name": "Becky", "age": 32},
+    {"id": 1, "name": "芝麻薄脆餅乾", "age": 29, "ingredients":"食材：低筋麵粉、熟白芝麻、蛋白兩顆、鹽少許、細白砂糖、植物油、香草精（可不加）", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F373754%2F9231b8fc9d4306c8.jpg&width=200"},
+    {"id": 2, "name": "可愛的「小熊白色戀人餅乾」內餡香濃好滋味", "age": 40, "ingredients":"食材：金桶牛油、糖粉、玉米粉、低筋麵粉", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F373627%2F63cf385d08778d22.jpg&width=200"},
+    {"id": 3, "name": "曲奇餅乾", "age": 5, "ingredients":"食材：蓬萊米粉、高筋麵粉、糖、鹽、泡打粉、速發乾燥酵母、豆漿、奶油", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F373452%2Fecc197c968e77c1b.jpg&width=200"},
+    {"id": 4, "name": "天使餅乾：米粉豆漿酵母司康", "age": 35, "ingredients":"食材：(1)低筋麵粉、(2)無鋁泡打粉、(3)椰漿粉、(4)食用小蘇打粉、(5)糖粉、(6)海鹽、鮮奶、清淡橄欖油、熟黑芝麻粒、花型餅乾模", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F371488%2Ffe778ca38dd4dd21.jpg&width=200"},
+    {"id": 5, "name": "黑芝麻小花餅乾", "age": 21, "ingredients":"食材：巧克力、無鹽奶油、糖粉、雞蛋液、低筋麵粉、鹽", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F373055%2F20bc17d5f1c8dcd5.jpg&width=200"},
+    {"id": 6, "name": "好夢幻「戒指餅乾」好玩又好吃♡", "age": 55, "ingredients":"食材：蛋白、糖、蛋黃、糖粉、低筋麵粉", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F373033%2F33e725f1fd56d0d9.jpg&width=200"},
+    {"id": 7, "name": "簡單的手指餅乾", "age": 30, "ingredients":"食材：低筋麵粉、無鹽奶油、糖、鹽、蛋、玫瑰奶茶茶包", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F372971%2Fd84ab466fd99ec22.jpg&width=200"},
+    {"id": 8, "name": "玫瑰奶茶餅乾（３點一刻茶包）", "age": 14, "ingredients":"食材：奶油、細砂糖、全蛋、低筋麵粉、果醬", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F372905%2F693899289ec09c09.jpg&width=200"},
+    {"id": 9, "name": "林茲餅乾", "age": 100, "ingredients":"食材：低筋麵粉、無鹽奶油、抹茶粉、糖粉、可可粉、鹽、全蛋", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F372446%2F908fcbfc4588b161.jpg&width=200"},
+    {"id": 10, "name": "手工餅乾🍪原味、抹茶、可可", "age": 32, "ingredients":"食材：低筋麵粉、三合一咖啡粉、蛋、無鹽奶油、（二）砂糖、敲碎的堅果", "img":"https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F372302%2F4b5e3f564331caa7.jpg&width=200"},
   ];
 
   final _textController = TextEditingController();
@@ -185,13 +186,18 @@ class _MyHomePageState extends State<MyHomePage> {
                     elevation: 4,
                     margin: EdgeInsets.symmetric(vertical: 10),
                     child: ListTile(
-                      leading: Text(
-                        _foundUsers[index]["id"].toString(),
-                        style: TextStyle(fontSize: 24),
+                      leading: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: 128,
+                          minHeight: 128,
+                          maxWidth: 256,
+                          maxHeight: 256,
+                        ),
+                        child: Image.network("https://api.allorigins.win/raw?url="+Uri.encodeComponent(_foundUsers[index]['img'])),
                       ),
                       title: Text(_foundUsers[index]['name']),
                       subtitle: Text(
-                          '${_foundUsers[index]["age"].toString()} years old'),
+                          '${_foundUsers[index]["ingredients"]}'),
                     ),
                   ),
                 )
