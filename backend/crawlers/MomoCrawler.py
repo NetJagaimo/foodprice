@@ -1,23 +1,15 @@
 import re
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-chrome_options = Options()
-#chrome_options.add_argument("--disable-extensions")
-#chrome_options.add_argument("--disable-gpu")
-#chrome_options.add_argument("--no-sandbox") # linux only
-chrome_options.add_argument("--headless")
-# chrome_options.headless = True # also works
-driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
 class MomoCrawler:
     def __init__(self, driver):
         self.driver = driver
 
-    def get_food_datas(self, keyword):
+    def get_ingredient_datas(self, keyword):
         url = f"https://www.momoshop.com.tw/search/searchShop.jsp?keyword={keyword}&searchType=1&cateLevel=0&cateCode=&curPage=1&_isFuzzy=0&showType=chessboardType"
 
         self.driver.get(url)
@@ -90,8 +82,19 @@ class MomoCrawler:
     def destroy(self):
         self.driver.quit()
 
+if __name__ == "__main__":
+    from selenium import webdriver
+    from selenium.webdriver.chrome.options import Options
+    
+    chrome_options = Options()
+    #chrome_options.add_argument("--disable-extensions")
+    #chrome_options.add_argument("--disable-gpu")
+    #chrome_options.add_argument("--no-sandbox") # linux only
+    chrome_options.add_argument("--headless")
+    # chrome_options.headless = True # also works
+    driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
-momo_crawler = MomoCrawler(driver)
-datas = momo_crawler.get_food_datas('豬肉')
-for data in datas:
-    print(data)
+    momo_crawler = MomoCrawler(driver)
+    datas = momo_crawler.get_ingredient_datas('豬肉')
+    for data in datas:
+        print(data)
