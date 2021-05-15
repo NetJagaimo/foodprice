@@ -69,6 +69,8 @@ def read_ingredients(ingredient_name: str):
         tasks.append(loop.create_task(scrape(crawler, ingredient_name, loop=loop)))
     ingredients = loop.run_until_complete(asyncio.gather(*tasks))
 
+    ingredients = sorted(ingredients, key=price_per_kg_for_sort)
+
     return {"ingredients": ingredients}
 
 @app.get("/search-recipe")
