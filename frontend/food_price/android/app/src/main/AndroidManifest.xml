@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.dsc21.food_price">
+    package="com.example.food_price">
    <application
         android:label="food_price"
         android:icon="@mipmap/ic_launcher">
