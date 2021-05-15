@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'pickitem.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'dart:ui' as ui;
+import 'dataclass.dart' as dataclass;
 
 
 class WelcomeScreen extends StatefulWidget {
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
-class Ingredient extends StatelessWidget {
-  Ingredient([this.title = 'Oeschinen Lake Campground' , this.subtitle = 'Kandersteg, Switzerland']);
+class IngredientTile extends StatelessWidget {
+  IngredientTile([this.title = 'Oeschinen Lake Campground' , this.subtitle = 'Kandersteg, Switzerland']);
   final String title;
   final String subtitle;
 
@@ -17,7 +18,7 @@ class Ingredient extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> PickItem()));
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> PickItemScreen(ingredientName: title,)));
       // final snackBar = SnackBar(
       //   content: Text('Yay! A SnackBar!'));
       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -55,7 +56,6 @@ class Ingredient extends StatelessWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget buildHomePage(String title) {
-
     final subTitle = Text(
       'Pavlova is a meringue-based dessert named after the Russian ballerina '
           'Anna Pavlova. Pavlova features a crisp crust and soft, light inside, '
@@ -163,17 +163,35 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   }
 
   List<Widget> ingredients = [];
-  void _buildTestList(){
-    ingredients.add(Ingredient('Ingredient1', 'good for health'));
-    ingredients.add(Ingredient('Ingredient1', 'good for health'));
-    ingredients.add(Ingredient('Ingredient1', 'good for health'));
-    ingredients.add(Ingredient());
-    ingredients.add(Ingredient());
+
+  Future<void> _buildTestList() async {
+    var testrecipe = await dataclass.parseRecipeJson();
+    setState(() {
+      for (dataclass.RecipeDetail r in testrecipe.recipeDetail){
+        if (r.ingredients.isNotEmpty){
+          ingredients.add(
+              Padding(
+                padding: const EdgeInsets.only(left:8.0),
+                child: Text(r.groupName,
+                  style: Theme.of(context).textTheme.headline5,
+          ),
+              ));
+          for (dataclass.Ingredient ing in r.ingredients){
+            ingredients.add(IngredientTile(ing.name, ing.unit));
+          }
+        }
+      }
+    });
+    print(ingredients[3]);
+  }
+  @override
+  void initState(){
+    super.initState();
+    _buildTestList();
   }
 
   @override
   Widget build(BuildContext context) {
-    _buildTestList();
     return MainFrame(
       body: Center(child:buildRecipeScreen(context)),
     );
@@ -222,7 +240,7 @@ class MainFrame extends StatelessWidget {
   }
 }
 
-class CenterBox extends StatelessWidget {
+class CenterBox extends StatefulWidget {
   const CenterBox({
     Key key,
     @required this.ingredients,
@@ -231,6 +249,11 @@ class CenterBox extends StatelessWidget {
   final List<Widget> ingredients;
 
   @override
+  _CenterBoxState createState() => _CenterBoxState();
+}
+
+class _CenterBoxState extends State<CenterBox> {
+  @override
   Widget build(BuildContext context) {
     return ConstrainedBox(
       constraints: BoxConstraints(
@@ -238,34 +261,38 @@ class CenterBox extends StatelessWidget {
       child: Card(
         elevation: 2,
         margin: EdgeInsets.only(bottom: 100),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
-            children: [
-            Expanded(
-              flex: 2,
-              child: buildLeftColumn('https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F351486%2Fd8148f07fe50e2d1.jpg&width=600'),
-            ),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // 食材列表
-                  Text('食材',style: Theme.of(context).textTheme.headline4,),
-                  ingredientsList(ingredients: ingredients),
-                ],
-              ),
-            ),]),
-        )
+        child: buildRecipe(context)
       ));
+  }
+
+  Padding buildRecipe(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          children: [
+          Expanded(
+            flex: 2,
+            child: buildLeftColumn('https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F351486%2Fd8148f07fe50e2d1.jpg&width=600'),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                // 食材列表
+                Text('食材',style: Theme.of(context).textTheme.headline4,),
+                Divider(thickness: 2,),
+                ingredientsList(ingredients: widget.ingredients),
+              ],
+            ),
+          ),]),
+      );
   }
 
   Container buildLeftColumn(String url) {
     String _parseUrl(String oriUrl){
       var reavelUrl = oriUrl.split("url=")[1].split('width=')[0];
-      print(Uri.decodeFull(reavelUrl));
-      return 'https://api.allorigins.win/raw?url=' + Uri.decodeFull(reavelUrl);
+      return 'http://128.199.227.138:9527/' + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
     }
     return Container(
       child: Column(
@@ -285,7 +312,8 @@ class CenterBox extends StatelessWidget {
             ),
             //Image.asset('../assets/testfood.jpg',scale: 0.2),]
             Image.network(
-              _parseUrl(url)
+              _parseUrl(url),
+              headers: {'X-Requested-With':'XMLHttpRequest'}
               ,)
           ]),
     );
@@ -304,7 +332,7 @@ class ingredientsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: ListView.builder(
-        itemCount: 4,
+        itemCount: ingredients.length,
         itemBuilder: (_, int idx)=>ingredients[idx]),
     );
   }

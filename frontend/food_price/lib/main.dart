@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'recipe.dart';
 import 'welcome.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
 
 
 void main() {
+  DotEnv.load();
   runApp(MyApp());
 }
 
