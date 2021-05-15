@@ -5,30 +5,25 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
-class MomoCrawler:
+class FridayCrawler:
     def __init__(self, driver):
         self.driver = driver
 
     def get_ingredient_datas(self, keyword):
+        url = f"https://shopping.friday.tw/ec2/search?keyword={keyword}"
 
-        url = f"https://www.momoshop.com.tw/search/searchShop.jsp?keyword={keyword}&searchType=1&cateLevel=0&cateCode=&curPage=1&_isFuzzy=1&showType=chessboardType"
+        self.driver.get(url)
 
-        self.driver.get(url) 
-
-        WebDriverWait(self.driver, 50).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li .prdImg'))
-        )
-
-        results = WebDriverWait(self.driver, 50).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li'))
+        results = WebDriverWait(self.driver, 30).until(
+            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#wrapper_box > div.search_container > div.product_items_box > div'))
         )
 
         datas = []
 
         for result in results:
-            link = result.find_element_by_css_selector('.goodsUrl').get_attribute('href')
-            name = result.find_element_by_css_selector('.prdName').text
-            price = int(result.find_element_by_css_selector('.price b').text.replace(',', ''))
+            link = result.find_element_by_css_selector('a').get_attribute('href')
+            name = result.find_element_by_css_selector('.prod_name').text
+            price = int(result.find_element_by_css_selector('.price').text.replace(',', ''))
             
             kg = self.extract_kg_from_name(name)
             if kg <= 0:
@@ -36,10 +31,10 @@ class MomoCrawler:
             else:
                 price_per_kg = round(price / kg, 4)
             
-            image_link = result.find_element_by_css_selector('.prdImg').get_attribute('src')
+            image_link = result.find_element_by_css_selector('.photo img').get_attribute('src')
 
             data = {
-                "source": 'momo',
+                "source": 'friday',
                 "link": link,
                 "name": name,
                 "price": price,
@@ -86,13 +81,13 @@ if __name__ == "__main__":
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
     #chrome_options.add_argument("--no-sandbox") # linux only
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
     driver = webdriver.Chrome('./chromedriver', options=chrome_options)
 
-    momo_crawler = MomoCrawler(driver)
-    datas = momo_crawler.get_ingredient_datas('新鮮苦瓜')
+    friday_crawler = FridayCrawler(driver)
+    datas = friday_crawler.get_ingredient_datas('新鮮小黃瓜')
     for data in datas:
         print(data)
-    
-    momo_crawler.destroy()
+
+    friday_crawler.destroy()
