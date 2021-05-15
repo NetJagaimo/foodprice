@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'pickitem.dart';
+import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'dart:ui' as ui;
 
 
@@ -15,15 +17,15 @@ class Ingredient extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-      final snackBar = SnackBar(
-        content: Text('Yay! A SnackBar!'));
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Navigator.push(context, MaterialPageRoute(builder: (context)=> PickItem()));
+      // final snackBar = SnackBar(
+      //   content: Text('Yay! A SnackBar!'));
+      // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       },
       child: Container(
         padding: const EdgeInsets.all(16),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.start ,
-
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -53,17 +55,6 @@ class Ingredient extends StatelessWidget {
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget buildHomePage(String title) {
-    final titleText = Container(
-      padding: EdgeInsets.all(20),
-      child: Text(
-        'Strawberry Pavlova',
-        style: TextStyle(
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.5,
-          fontSize: 30,
-        ),
-      ),
-    );
 
     final subTitle = Text(
       'Pavlova is a meringue-based dessert named after the Russian ballerina '
@@ -161,7 +152,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       //padding: EdgeInsets.fromLTRB(20, 30, 20, 20),
       child: Column(
         children: [
-          titleText,
+          //titleText,
           // subTitle,
           // ratings,
           // iconList,
@@ -169,37 +160,6 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       ),
     );
     // #enddocregion leftColumn
-  }
-  Widget _singleItem (
-      [String title = 'Oeschinen Lake Campground', String subtitle = 'Kandersteg, Switzerland']){
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start ,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(
-                    title,
-                    style: TextStyle(fontWeight: FontWeight.bold,),
-                  ),
-                ),
-                Text(
-                  subtitle,
-                  style: TextStyle(color: Colors.grey[500],),
-                ),
-              ],
-            ),
-            Icon(Icons.star, color: Colors.red[500],),
-            Text('41'),
-          ],
-        ),
-      ),
-    );
   }
 
   List<Widget> ingredients = [];
@@ -214,52 +174,27 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     _buildTestList();
-    // return buildHomePage("abc");
+    return MainFrame(
+      body: Center(child:buildRecipeScreen(context)),
+    );
+  }
+
+  CenterBox buildRecipeScreen(BuildContext context) {
+    return CenterBox(ingredients: ingredients);
+  }
+}
+class MainFrame extends StatelessWidget {
+  const MainFrame({
+    Key key, this.body
+  }) : super(key: key);
+  final Widget body;
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orangeAccent,
+      appBar: AppBar(title: Text('Recipe'),automaticallyImplyLeading: false,),
+      // backgroundColor: Colors.orangeAccent,
       // body: Center(child: Text('Welcome!', style: Theme.of(context).textTheme.headline2,),),
-        body: Center(
-            child: ConstrainedBox(
-                constraints: BoxConstraints(
-                    minWidth: 70, minHeight: 70, maxWidth: 1000, maxHeight: 800),
-                child: Card(
-                  margin: EdgeInsets.only(bottom: 100),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      children: [
-                      Expanded(
-                        flex: 2,
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Text("Food Name",style: Theme.of(context).textTheme.headline3,),
-                              ),
-                              Image.asset('../assets/testfood.jpg',scale: 0.2),]
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // 食材列表
-                            Text('食材',style: Theme.of(context).textTheme.headline4,),
-                            Expanded(
-                              child: ListView.builder(
-                                itemCount: 4,
-                                itemBuilder: (_, int idx)=>ingredients[idx]),
-                            ),
-                          ],
-                        ),
-                      ),]),
-                  )
-                ))),
+        body: body,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Container(
           margin: EdgeInsets.only(bottom: 50),
@@ -269,6 +204,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               FloatingActionButton.extended(
+                heroTag: null,
                 label: Text('test'),
                 onPressed: ()=> Navigator.pop(context),
                 icon: Icon(Icons.navigate_before),
@@ -282,9 +218,94 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ),
           ),
         )
+    );
+  }
+}
 
-          // FloatingActionButton.extended(label: Text('test'),onPressed: () { return 0;}),
-          // FloatingActionButton.extended(label: Text('test2'),onPressed: () { return 0;})],)
+class CenterBox extends StatelessWidget {
+  const CenterBox({
+    Key key,
+    @required this.ingredients,
+  }) : super(key: key);
+
+  final List<Widget> ingredients;
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+          minWidth: 70, minHeight: 70, maxWidth: 1000, maxHeight: 800),
+      child: Card(
+        elevation: 2,
+        margin: EdgeInsets.only(bottom: 100),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+            Expanded(
+              flex: 2,
+              child: buildLeftColumn('https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F351486%2Fd8148f07fe50e2d1.jpg&width=600'),
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  // 食材列表
+                  Text('食材',style: Theme.of(context).textTheme.headline4,),
+                  ingredientsList(ingredients: ingredients),
+                ],
+              ),
+            ),]),
+        )
+      ));
+  }
+
+  Container buildLeftColumn(String url) {
+    String _parseUrl(String oriUrl){
+      var reavelUrl = oriUrl.split("url=")[1].split('width=')[0];
+      print(Uri.decodeFull(reavelUrl));
+      return 'https://api.allorigins.win/raw?url=' + Uri.decodeFull(reavelUrl);
+    }
+    return Container(
+      child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Food Name",
+                    style: TextStyle(
+
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.5,
+                      fontSize: 30,
+                    ))
+              //style: Theme.of(context).textTheme.headline3,),
+            ),
+            //Image.asset('../assets/testfood.jpg',scale: 0.2),]
+            Image.network(
+              _parseUrl(url)
+              ,)
+          ]),
+    );
+  }
+}
+
+class ingredientsList extends StatelessWidget {
+  const ingredientsList({
+    Key key,
+    @required this.ingredients,
+  }) : super(key: key);
+
+  final List<Widget> ingredients;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: ListView.builder(
+        itemCount: 4,
+        itemBuilder: (_, int idx)=>ingredients[idx]),
     );
   }
 }
