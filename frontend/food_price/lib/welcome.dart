@@ -221,40 +221,70 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         body: Center(
             child: ConstrainedBox(
                 constraints: BoxConstraints(
-                    minWidth: 70, minHeight: 70, maxWidth: 800, maxHeight: 600),
+                    minWidth: 70, minHeight: 70, maxWidth: 1000, maxHeight: 800),
                 child: Card(
-                  child: Row(
-                    children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text("Food Name",style: Theme.of(context).textTheme.headline3,),
-                            ),
-                            Image.asset('../assets/testfood.jpg',scale: 0.2),]
+                  margin: EdgeInsets.only(bottom: 100),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      children: [
+                      Expanded(
+                        flex: 2,
+                        child: Container(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Food Name",style: Theme.of(context).textTheme.headline3,),
+                              ),
+                              Image.asset('../assets/testfood.jpg',scale: 0.2),]
+                          ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // 食材列表
-                          Text('食材',style: Theme.of(context).textTheme.headline4,),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: 4,
-                              itemBuilder: (_, int idx)=>ingredients[idx]),
-                          ),
-                        ],
-                      ),
-                    ),])
-                ))));
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            // 食材列表
+                            Text('食材',style: Theme.of(context).textTheme.headline4,),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: 4,
+                                itemBuilder: (_, int idx)=>ingredients[idx]),
+                            ),
+                          ],
+                        ),
+                      ),]),
+                  )
+                ))),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Container(
+          margin: EdgeInsets.only(bottom: 50),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              FloatingActionButton.extended(
+                label: Text('test'),
+                onPressed: ()=> Navigator.pop(context),
+                icon: Icon(Icons.navigate_before),
+              ),
+              FloatingActionButton.extended(
+                label: Text('test'),
+                onPressed: () {},
+                icon: Icon(Icons.navigate_next),
+                )
+              ],
+            ),
+          ),
+        )
+
+          // FloatingActionButton.extended(label: Text('test'),onPressed: () { return 0;}),
+          // FloatingActionButton.extended(label: Text('test2'),onPressed: () { return 0;})],)
+    );
   }
 }
