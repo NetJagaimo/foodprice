@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => MyHomePage(title: 'Recipe Link'),
         // Placeholder // ToBeRemoved:
-        '/welcome': (context) => RecipeScreen(url:'https://icook.tw/recipes/373706',title: 'Recipe',),
+        '/welcome': (context) => RecipeScreen(url:'https://icook.tw/recipes/373706',name: 'Recipe',),
       },
     );
   }
@@ -129,10 +129,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void _handleClickSearchResult(String url) {
+  void _handleClickSearchResult(String url, String name, String imgUrl) {
     print(url);
     Navigator.push(
-        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url:url, title:'Recipe'))
+        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url:url, name:name,imgUrl: imgUrl,))
     );
   }
 
@@ -175,7 +175,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: _shownRecipes.length,
                   itemBuilder: (context, index) => InkWell(
                     onTap: () {
-                      _handleClickSearchResult(_shownRecipes[index].url);
+                      _handleClickSearchResult(
+                          _shownRecipes[index].url,
+                          _shownRecipes[index].name,
+                          _shownRecipes[index].imageUrl);
                     },
                     child: Card(
                       key: ValueKey(index),
