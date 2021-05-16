@@ -176,7 +176,8 @@ class _MyHomePageState extends State<MyHomePage> {
                   itemCount: _shownRecipes.length,
                   itemBuilder: (context, index) => InkWell(
                     onTap: () {
-                      _handleClickSearchResult(_shownRecipes[index].url,
+                      _handleClickSearchResult(
+                          _shownRecipes[index].url,
                           _shownRecipes[index].name,
                           _shownRecipes[index].imageUrl);
                     },

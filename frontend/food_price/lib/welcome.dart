@@ -195,8 +195,10 @@ class _RecipeScreenState extends State<RecipeScreen> {
   void _itemSelectedCallBack(String name) async {
     dataclass.MomoItems selectedItem = await Navigator.push(context, MaterialPageRoute(
         builder: (context)=> PickItemScreen(ingredientName: name,)));
-    itemsList.add(selectedItem);
-    print(selectedItem.link);
+    if (selectedItem != null){
+      itemsList.add(selectedItem);
+      print(selectedItem.link);
+    }
   }
   @override
   void initState(){
@@ -330,7 +332,7 @@ class _CenterBoxState extends State<CenterBox> {
             //Image.asset('../assets/testfood.jpg',scale: 0.2),]
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
-              image: NetworkImage(_parseUrl(url),
+              image: NetworkImage(_parseUrl(widget.imgUrl),
                   headers: {'X-Requested-With':'XMLHttpRequest'}),
             ),
             // NOTE: this is non-fade image
