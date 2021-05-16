@@ -141,10 +141,11 @@ class MomoItems {
 }
 
 Future<MomoIngredients> getIngredientsFromMomo(String ingredient) async {
-  final api = env['INGREDIENT_API'];
+  final api = env.containsKey('INGREDIENT_API_ALTER') ? env['INGREDIENT_API_ALTER'] : env['INGREDIENT_API'];
   final response = await http.get(
       Uri.parse(api+ingredient),
   );
+  print(response);
   if (response.statusCode == 200) {
     return MomoIngredients.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   } else {
@@ -155,9 +156,9 @@ Future<MomoIngredients> getIngredientsFromMomo(String ingredient) async {
   }
 }
 
-Image corsImage(String url){
+Image corsImage(String url, double width){
   return Image.network(
     env['CORS_PROXY']+url,
-    width: 30,
+    width: width,
     headers: {'X-Requested-With':'XMLHttpRequest'},);
 }

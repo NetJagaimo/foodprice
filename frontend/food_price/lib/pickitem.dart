@@ -14,23 +14,48 @@ class PickItemScreen extends StatefulWidget {
 
 class _PickItemScreenState extends State<PickItemScreen> {
 
-  final List<String> _itemnames = [];
+  final List<dataclass.MomoItems> _itemnames = [];
 
-  Future<void> showAvailableItems() async {
+  Future<void> addAvailableItems() async {
     print(widget.ingredientName);
     var momoIngredients = await dataclass.getIngredientsFromMomo(widget.ingredientName);
+    if (momoIngredients == null){return;}
     setState(() {
       for (dataclass.MomoItems item in momoIngredients.momoItems){
-        _itemnames.add(item.imageLink);
+        _itemnames.add(item);
       }
     });
+  }
+  
+  Widget _buildItemTile(dataclass.MomoItems item){
+    return InkWell(
+      onTap: (){
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(item.link)));
+      },
+      child: Card(
+        child: Column(children: [
+          Expanded(child: dataclass.corsImage(item.imageLink, 150)),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+              Expanded(
+                child: Text(item.name,
+                  style: Theme.of(context).textTheme.bodyText1,),
+              ),
+              Text(item.price.toString(),)
+            ],),
+          )
+        ],),
+      ),
+    );
   }
 
 
   @override
   void initState(){
     super.initState();
-    showAvailableItems();
+    addAvailableItems();
   }
 
   @override
@@ -43,9 +68,28 @@ class _PickItemScreenState extends State<PickItemScreen> {
           child: Card(
           elevation: 2,
           margin: EdgeInsets.only(bottom: 100),
-          child: ListView.builder(
-              itemCount: (_itemnames.length > 2) ? 2 : _itemnames.length,
-              itemBuilder: (_,int idx)=>dataclass.corsImage(_itemnames[idx]))
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: (_itemnames.length > 2)
+              ? GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  crossAxisCount: 3,
+                ),
+                itemCount: 6, //_itemnames.length, // TODO: To be changed in prod
+                itemBuilder: (_,int idx)=>_buildItemTile(_itemnames[idx]))
+              : Center(child: SizedBox(
+                  width: 100,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(),
+                        Text('Loading',
+                          style: Theme.of(context).textTheme.headline6,)
+                      ])
+                )),
+          )
           )
         ),
       ),
