@@ -141,7 +141,7 @@ class MomoItems {
 }
 
 Future<MomoIngredients> getIngredientsFromMomo(String ingredient) async {
-  final api = env['INGREDIENT_API_ALTER'];
+  final api = env.containsKey('INGREDIENT_API_ALTER') ? env['INGREDIENT_API_ALTER'] : env['INGREDIENT_API'];
   final response = await http.get(
       Uri.parse(api+ingredient),
   );
