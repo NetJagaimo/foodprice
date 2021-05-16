@@ -212,9 +212,10 @@ class _RecipeScreenState extends State<RecipeScreen> {
 }
 class MainFrame extends StatelessWidget {
   const MainFrame({
-    Key key, this.body
+    Key key, this.body, this.nextPage
   }) : super(key: key);
   final Widget body;
+  final Widget nextPage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -232,13 +233,15 @@ class MainFrame extends StatelessWidget {
             children: <Widget>[
               FloatingActionButton.extended(
                 heroTag: null,
-                label: Text('test'),
+                label: Text('上一頁'),
                 onPressed: ()=> Navigator.pop(context),
                 icon: Icon(Icons.navigate_before),
               ),
               FloatingActionButton.extended(
-                label: Text('test'),
-                onPressed: () {},
+                label: Text('下一頁'),
+                onPressed: ()=> (nextPage != null) ? Navigator.push(
+                    context, MaterialPageRoute(builder: (context)=> nextPage))
+                : null, // TODO: put next step in it.
                 icon: Icon(Icons.navigate_next),
                 )
               ],

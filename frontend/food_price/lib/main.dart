@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'recipe.dart';
 import 'welcome.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart' as DotEnv;
@@ -25,11 +26,14 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
+        textTheme: GoogleFonts.notoSansTextTheme(Theme.of(context).textTheme),
         primarySwatch: Colors.orange,
       ),
       //home: MyHomePage(title: 'Flutter Demo Home Page'),
       routes: {
         '/': (context) => MyHomePage(title: 'Recipe Link'),
+        // Placeholder // ToBeRemoved:
+        '/welcome': (context) => RecipeScreen('https://icook.tw/recipes/373706'),
       },
     );
   }
@@ -124,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _handleClickSearchResult(String url) {
+    print(url);
     Navigator.push(
         context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url))
     );
