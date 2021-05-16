@@ -66,7 +66,7 @@ def read_root():
     return {"Hello": "World"}
 
 @app.get("/ingredient/{ingredient_name}")
-@cache(expire=1200)
+@cache(expire=3600)
 async def read_ingredients(ingredient_name: str):
     chrome_options = Options()
     #chrome_options.add_argument("--disable-extensions")
