@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_cache.coder import JsonCoder
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,6 +11,19 @@ import asyncio
 from concurrent.futures.thread import ThreadPoolExecutor
 
 import itertools
+
+import aioredis
+
+from starlette.requests import Request
+from starlette.responses import Response
+
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from fastapi_cache.decorator import cache
+
+import nest_asyncio
+
+nest_asyncio.apply()
 
 executor = ThreadPoolExecutor(10)
 
@@ -42,12 +56,18 @@ def scraper(crawler, ingredient_name):
     
     return results
 
+@app.on_event("startup")
+async def startup():
+    redis = await aioredis.create_redis_pool("redis://localhost", encoding="utf8")
+    FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
 @app.get("/ingredient/{ingredient_name}")
-def read_ingredients(ingredient_name: str):
+@cache(expire=1200)
+async def read_ingredients(ingredient_name: str):
     chrome_options = Options()
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
