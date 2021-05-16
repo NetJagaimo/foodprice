@@ -21,9 +21,6 @@ from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
 from fastapi_cache.decorator import cache
 
-import nest_asyncio
-
-nest_asyncio.apply()
 
 executor = ThreadPoolExecutor(10)
 
@@ -76,16 +73,17 @@ async def read_ingredients(ingredient_name: str):
     # chrome_options.headless = True # also works
     driver = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
     driver2 = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
+    
     momo_crawler = MomoCrawler.MomoCrawler(driver)
     friday_crawler = FridayCrawler.FridayCrawler(driver2)
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
     
+    loop = asyncio.get_event_loop()
+
     crawlers = [momo_crawler, friday_crawler]
     tasks = []
     for crawler in crawlers:
         tasks.append(loop.create_task(scrape(crawler, ingredient_name, loop=loop)))
-    ingredients = loop.run_until_complete(asyncio.gather(*tasks))
+    ingredients = await asyncio.gather(*tasks)
     
     ingredients = itertools.chain(*ingredients)
 
