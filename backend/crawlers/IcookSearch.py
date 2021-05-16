@@ -31,6 +31,8 @@ def searchRecipe(text, page):
             continue
         else:
             recipe_description = recipe_description.text.replace('\n', '').replace(' ', '')
+        recipe_ingredients_preview = search_result.find('p', class_ = 'browse-recipe-content-ingredient').text
+        recipe_ingredients_preview = recipe_ingredients_preview.replace('\n', '').replace(' ', '')
         recipe_image_url = search_result.find('img', class_ = 'browse-recipe-cover-img').get('data-src')
         recipe_image_url = recipe_image_url.split('url=')[1].split('&width')[0]
         recipe_image_url = unquote(recipe_image_url)
@@ -40,6 +42,7 @@ def searchRecipe(text, page):
             'name': recipe_name,
             'description': recipe_description,
             'url': recipe_url,
+            'ingredients_preview': recipe_ingredients_preview,
             'image_url': recipe_image_url
         }
 
