@@ -312,8 +312,7 @@ class _CenterBoxState extends State<CenterBox> {
 
   Container buildLeftColumn(String name, String url) {
     String _parseUrl(String oriUrl){
-      print(oriUrl);
-      return env['CORS_PROXY'] + oriUrl;
+      return env['CORS_PROXY'] + env['COMPRESSOR'] + oriUrl;
     }
     return Container(
       child: Column(

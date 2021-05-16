@@ -26,8 +26,10 @@ class RecipeSummary {
   String description;
   @JsonKey(name: 'image_url')
   String imageUrl;
+  @JsonKey(name: 'ingredients_preview')
+  String ingredientsPreview;
 
-  RecipeSummary({this.url, this.name, this.description, this.imageUrl});
+  RecipeSummary({this.url, this.name, this.description, this.imageUrl, this.ingredientsPreview});
 
   factory RecipeSummary.fromJson(Map<String, dynamic> json) => _$RecipeSummaryFromJson(json);
 

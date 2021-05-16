@@ -33,7 +33,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => MyHomePage(title: 'Recipe Link'),
         // Placeholder // ToBeRemoved:
-        '/welcome': (context) => RecipeScreen(url:'https://icook.tw/recipes/373706',name: 'Recipe',),
+        '/welcome': (context) => RecipeScreen(url:'https://icook.tw/recipes/373706', name: 'Recipe',
+            imgUrl:'http://tokyo-kitchen.icook.tw.s3.amazonaws.com/uploads/recipe/cover/372446/908fcbfc4588b161.jpg'),
       },
     );
   }
@@ -132,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleClickSearchResult(String url, String name, String imgUrl) {
     print(url);
     Navigator.push(
-        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url:url, name:name,imgUrl: imgUrl,))
+        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url:url, name:name, imgUrl: imgUrl))
     );
   }
 
@@ -192,7 +193,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             Expanded(
                               flex: 22,
                               child: Image.network(
-                                  DotEnv.env['CORS_PROXY'] + _shownRecipes[index].imageUrl,
+                                  DotEnv.env['CORS_PROXY'] + DotEnv.env['THUMBNAIL'] + _shownRecipes[index].imageUrl,
                                   headers: {'X-Requested-With':'XMLHttpRequest'},
                                   fit: BoxFit.cover),
                             ),
@@ -200,12 +201,16 @@ class _MyHomePageState extends State<MyHomePage> {
                             Expanded(
                               flex: 78,
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(_shownRecipes[index].name,
                                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                                  SizedBox(height: 10),
+                                  SizedBox(height: 15),
                                   Text(_shownRecipes[index].description,
                                       style: TextStyle(fontSize: 16)),
+                                  SizedBox(height: 10),
+                                  Text(_shownRecipes[index].ingredientsPreview,
+                                      style: Theme.of(context).textTheme.bodyText1)
                                 ],
                               ),
                             ),
