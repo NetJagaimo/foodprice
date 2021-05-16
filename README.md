@@ -46,6 +46,19 @@
 
 ### Frontend Installation
 
+* 進到專案工作目錄
+```
+cd foodprice
+```
+* 建立`.env` 至專案根目錄並複製以下資料
+```shell=
+CORS_PROXY=http://128.199.227.138:9527/
+INGREDIENT_API=http://128.199.227.138:8000/ingredient/
+RECIPE_SEARCH_API=http://128.199.227.138:8000/search-recipe
+RECIPE_DETAIL_API=http://128.199.227.138:8000/get-recipe
+THUMBNAIL=https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=150&width=200&nocrop=false&stripmeta=true&type=auto&url=
+COMPRESSOR=https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&width=800&nocrop=false&stripmeta=true&type=auto&url=
+```
 * 將原始碼編譯成網頁
 ```
 flutter build web
@@ -54,7 +67,7 @@ flutter build web
 ```
 cd build/web
 ```
-* 利用Python作為網頁伺服器進行快速瀏覽，即可透過http://127.0.0.1:8000上前端網頁
+* 利用Python作為網頁伺服器進行快速瀏覽，即可透過 http://127.0.0.1:8000 上前端網頁
 ```
 python3 -m http.server 8000
 ```
