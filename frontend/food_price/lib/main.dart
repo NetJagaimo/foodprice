@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => MyHomePage(title: 'Recipe Link'),
         // Placeholder // ToBeRemoved:
-        '/welcome': (context) => RecipeScreen('https://icook.tw/recipes/373706'),
+        '/welcome': (context) => RecipeScreen(url:'https://icook.tw/recipes/373706',title: 'Recipe',),
       },
     );
   }
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void _handleClickSearchResult(String url) {
     print(url);
     Navigator.push(
-        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url))
+        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url:url, title:'Recipe'))
     );
   }
 

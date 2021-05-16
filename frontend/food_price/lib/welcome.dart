@@ -1,28 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'pickitem.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'dart:ui' as ui;
 import 'dataclass.dart' as dataclass;
 
-
-class RecipeScreen extends StatefulWidget {
-  final String url;
-  RecipeScreen(this.url);
-
-  @override
-  _RecipeScreenState createState() => _RecipeScreenState(this.url);
-}
 class IngredientTile extends StatelessWidget {
-  IngredientTile([this.title = 'Oeschinen Lake Campground', this.subtitle = 'Kandersteg, Switzerland']);
-  final String title;
-  final String subtitle;
+  IngredientTile([this.name = 'Oeschinen Lake Campground', this.unit = 'Kandersteg, Switzerland', this.callback]);
+  final String name;
+  final String unit;
+  final Function callback;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> PickItemScreen(ingredientName: title,)));
+        callback(name);
       // final snackBar = SnackBar(
       //   content: Text('Yay! A SnackBar!'));
       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
@@ -38,12 +32,12 @@ class IngredientTile extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Text(
-                    title,
+                    name,
                     style: TextStyle(fontWeight: FontWeight.bold,),
                   ),
                 ),
                 Text(
-                  subtitle,
+                  unit,
                   style: TextStyle(color: Colors.grey[500],),
                 ),
               ],
@@ -58,9 +52,18 @@ class IngredientTile extends StatelessWidget {
   }
 }
 
-class _RecipeScreenState extends State<RecipeScreen> {
+class RecipeScreen extends StatefulWidget {
   final String url;
-  _RecipeScreenState(this.url);
+  final String title;
+  RecipeScreen({this.url, this.title});
+
+  @override
+  _RecipeScreenState createState() => _RecipeScreenState();
+}
+
+class _RecipeScreenState extends State<RecipeScreen> {
+
+  List<dataclass.MomoItems> itemsList = [];
 
   Widget buildHomePage(String title) {
     final subTitle = Text(
@@ -172,7 +175,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
   List<Widget> ingredients = [];
 
   Future<void> _buildTestList() async {
-    var recipe = await dataclass.parseRecipeJson(this.url);
+    var recipe = await dataclass.parseRecipeJson(widget.url);
     setState(() {
       for (dataclass.RecipeDetail r in recipe.recipeDetail){
         if (r.ingredients.isNotEmpty){
@@ -184,12 +187,18 @@ class _RecipeScreenState extends State<RecipeScreen> {
           ),
               ));
           for (dataclass.Ingredient ing in r.ingredients){
-            ingredients.add(IngredientTile(ing.name, ing.unit));
+            ingredients.add(IngredientTile(ing.name, ing.unit, _itemSelectedCallBack));
           }
         }
       }
     });
     print(ingredients[3]);
+  }
+  void _itemSelectedCallBack(String name) async {
+    dataclass.MomoItems selectedItem = await Navigator.push(context, MaterialPageRoute(
+        builder: (context)=> PickItemScreen(ingredientName: name,)));
+    itemsList.add(selectedItem);
+    print(selectedItem.link);
   }
   @override
   void initState(){
@@ -202,6 +211,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
     final args = ModalRoute.of(context).settings.arguments as String;
     print(args);
     return MainFrame(
+      title: widget.title,
       body: Center(child:buildRecipeScreen(context)),
     );
   }
@@ -212,14 +222,15 @@ class _RecipeScreenState extends State<RecipeScreen> {
 }
 class MainFrame extends StatelessWidget {
   const MainFrame({
-    Key key, this.body, this.nextPage
+    Key key, this.body, this.nextPage, this.title
   }) : super(key: key);
   final Widget body;
+  final String title;
   final Widget nextPage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Recipe'),automaticallyImplyLeading: false,),
+      appBar: AppBar(title: Text(title),automaticallyImplyLeading: false,),
       // backgroundColor: Colors.orangeAccent,
       // body: Center(child: Text('Welcome!', style: Theme.of(context).textTheme.headline2,),),
         body: body,
@@ -237,11 +248,10 @@ class MainFrame extends StatelessWidget {
                 onPressed: ()=> Navigator.pop(context),
                 icon: Icon(Icons.navigate_before),
               ),
-              FloatingActionButton.extended(
+              if (nextPage != null) FloatingActionButton.extended(
                 label: Text('下一頁'),
-                onPressed: ()=> (nextPage != null) ? Navigator.push(
-                    context, MaterialPageRoute(builder: (context)=> nextPage))
-                : null, // TODO: put next step in it.
+                onPressed: ()=>Navigator.push(
+                    context, MaterialPageRoute(builder: (context)=> nextPage)), // TODO: put next step in it.
                 icon: Icon(Icons.navigate_next),
                 )
               ],
@@ -284,6 +294,7 @@ class _CenterBoxState extends State<CenterBox> {
           children: [
           Expanded(
             flex: 2,
+            // TODO: Here to change food image
             child: buildLeftColumn('https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F351486%2Fd8148f07fe50e2d1.jpg&width=600'),
           ),
           Expanded(
@@ -315,7 +326,6 @@ class _CenterBoxState extends State<CenterBox> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text("Food Name",
                     style: TextStyle(
-
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
                       fontSize: 30,
@@ -323,10 +333,15 @@ class _CenterBoxState extends State<CenterBox> {
               //style: Theme.of(context).textTheme.headline3,),
             ),
             //Image.asset('../assets/testfood.jpg',scale: 0.2),]
-            Image.network(
-              _parseUrl(url),
-              headers: {'X-Requested-With':'XMLHttpRequest'}
-              ,)
+            FadeInImage(
+              placeholder: MemoryImage(kTransparentImage),
+              image: NetworkImage(_parseUrl(url),
+                  headers: {'X-Requested-With':'XMLHttpRequest'}),
+            ),
+            // NOTE: this is non-fade image
+            // Image.network(
+            //   _parseUrl(url),
+            //   headers: {'X-Requested-With':'XMLHttpRequest'}),
           ]),
     );
   }
@@ -343,9 +358,11 @@ class ingredientsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: ListView.builder(
-        itemCount: ingredients.length,
-        itemBuilder: (_, int idx)=>ingredients[idx]),
+      child: (ingredients.isNotEmpty)
+        ? ListView.builder(
+            itemCount: ingredients.length,
+            itemBuilder: (_, int idx)=>ingredients[idx])
+        : CenterLoadingAnimation(context: context),
     );
   }
 }
