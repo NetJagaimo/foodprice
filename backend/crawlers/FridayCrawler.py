@@ -14,9 +14,12 @@ class FridayCrawler:
 
         self.driver.get(url)
 
-        results = WebDriverWait(self.driver, 30).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#wrapper_box > div.search_container > div.product_items_box > div'))
-        )
+        try:
+            results = WebDriverWait(self.driver, 120).until(
+                EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#wrapper_box > div.search_container > div.product_items_box > div'))
+            )
+        except:
+            return {"error": "timeout"}
 
         datas = []
 
