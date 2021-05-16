@@ -64,14 +64,15 @@ class _MyHomePageState extends State<MyHomePage> {
   final _textController = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   bool _isComposing = false;
+  bool _searched = false; // at the beginning, remove no result found text.
 
   @override
   initState() {
-    // at the beginning, all users are shown
     super.initState();
   }
 
   void _runFilter(String enteredKeyword) async{
+    _searched = true;
     List<dataclass.RecipeSummary> results = [];
     var recipeSearchResult = await dataclass.searchRecipes(enteredKeyword, 1); // TODO: Add page
 
@@ -105,6 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   focusNode: _focusNode,
                   controller: _textController,
+                  onSubmitted: _isComposing ? _runFilter : null,
                   decoration:
                   InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
@@ -155,8 +157,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 20,
               ),
               Text(
-                'Search For Recipe!!',
-                style: Theme.of(context).textTheme.headline2 ,
+                'Search For Recipe',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 55),
+              ),
+              SizedBox(
+                height: 10,
               ),
               Container(
                 child: _buildTextComposer(),
@@ -165,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 height: 20,
               ),
               Flexible(
-                child:  _shownRecipes.length > 0
+                child:  _searched ? _shownRecipes.length > 0
                     ? ListView.builder(
                   itemCount: _shownRecipes.length,
                   itemBuilder: (context, index) => InkWell(
@@ -210,7 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     : Text(
                   'No results found',
                   style: TextStyle(fontSize: 24),
-                ),
+                ):SizedBox(width: 10),
               ),
       ])),
     );

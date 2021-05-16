@@ -172,9 +172,9 @@ class _RecipeScreenState extends State<RecipeScreen> {
   List<Widget> ingredients = [];
 
   Future<void> _buildTestList() async {
-    var testrecipe = await dataclass.parseRecipeJson(this.url);
+    var recipe = await dataclass.parseRecipeJson(this.url);
     setState(() {
-      for (dataclass.RecipeDetail r in testrecipe.recipeDetail){
+      for (dataclass.RecipeDetail r in recipe.recipeDetail){
         if (r.ingredients.isNotEmpty){
           ingredients.add(
               Padding(
