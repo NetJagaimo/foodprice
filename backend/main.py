@@ -71,7 +71,7 @@ async def read_ingredients(ingredient_name: str):
     #chrome_options.add_argument("--disable-extensions")
     #chrome_options.add_argument("--disable-gpu")
     #chrome_options.add_argument("--no-sandbox") # linux only
-    # chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--headless")
     # chrome_options.headless = True # also works
     driver = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
     driver2 = webdriver.Chrome('./crawlers/chromedriver', options=chrome_options)
