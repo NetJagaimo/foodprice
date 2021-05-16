@@ -16,11 +16,11 @@ class MomoCrawler:
         self.driver.get(url) 
         
         try:
-            WebDriverWait(self.driver, 120).until(
+            WebDriverWait(self.driver, 50).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li .prdImg'))
             )
 
-            results = WebDriverWait(self.driver, 120).until(
+            results = WebDriverWait(self.driver, 50).until(
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li'))
             )
         except:
