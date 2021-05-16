@@ -27,6 +27,7 @@ RecipeSummary _$RecipeSummaryFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     description: json['description'] as String,
     imageUrl: json['image_url'] as String,
+    ingredientsPreview: json['ingredients_preview'] as String,
   );
 }
 
@@ -36,6 +37,7 @@ Map<String, dynamic> _$RecipeSummaryToJson(RecipeSummary instance) =>
       'name': instance.name,
       'description': instance.description,
       'image_url': instance.imageUrl,
+      'ingredients_preview': instance.ingredientsPreview,
     };
 
 Ingredient _$IngredientFromJson(Map<String, dynamic> json) {
