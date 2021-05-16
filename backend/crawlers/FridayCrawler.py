@@ -19,7 +19,7 @@ class FridayCrawler:
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#wrapper_box > div.search_container > div.product_items_box > div'))
             )
         except:
-            return {"error": "timeout"}
+            print('error timeout')
 
         datas = []
 
