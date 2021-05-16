@@ -38,8 +38,8 @@
 ![](https://i.imgur.com/WNG8WuL.png)
 
 ## 使用到的技術
-Backend: Fastapi, Fastapi-cache2, redis, uvicorn, gunicorn
-Frontend: Flutter
+- Backend: Fastapi, Fastapi-cache2, redis, uvicorn, gunicorn
+- Frontend: Flutter
 
 ## 安裝說明
 ### [Backend Installation](https://github.com/NetJagaimo/foodprice/blob/main/backend/README.md)
@@ -62,4 +62,6 @@ python3 -m http.server 8000
 ## 未來規劃
 - 提供更多家購物網站的比價資訊
 - 與電商合作提供優惠並協助電商進行導購
-- 與食譜網站合作
+- 與食譜網站合作，提供更多食譜選擇
+- 購物網加入購物車之功能
+- 與市場均價比價功能
