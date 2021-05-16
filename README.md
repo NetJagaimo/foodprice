@@ -2,9 +2,13 @@
 
 ## 作者名字
 楊平 samabc75@gmail.com
+
 彭選庭 a84926601@gmail.com
+
 徐康恆wa0125678665@gmail.com
+
 陳維廷 hi@arthurchen.me
+
 曹又升 404261189@gapp.fju.edu.tw
 
 ## License
