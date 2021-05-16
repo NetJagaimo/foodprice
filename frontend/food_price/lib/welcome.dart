@@ -22,7 +22,7 @@ class IngredientTile extends StatelessWidget {
       // ScaffoldMessenger.of(context).showSnackBar(snackBar);
       },
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
@@ -30,21 +30,19 @@ class IngredientTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 6),
                   child: Text(
                     name,
                     style: TextStyle(fontWeight: FontWeight.bold,),
                   ),
                 ),
-                Text(
-                  unit,
-                  style: TextStyle(color: Colors.grey[500],),
-                ),
               ],
             ),
             Spacer(),
-            Icon(Icons.star, color: Colors.red[500],),
-            Text('41'),
+            Text(
+              unit,
+              style: TextStyle(color: Colors.grey[500],),
+            )
           ],
         ),
       ),
@@ -54,8 +52,9 @@ class IngredientTile extends StatelessWidget {
 
 class RecipeScreen extends StatefulWidget {
   final String url;
-  final String title;
-  RecipeScreen({this.url, this.title});
+  final String name;
+  final String imgUrl;
+  RecipeScreen({this.url, this.name, this.imgUrl});
 
   @override
   _RecipeScreenState createState() => _RecipeScreenState();
@@ -174,7 +173,7 @@ class _RecipeScreenState extends State<RecipeScreen> {
 
   List<Widget> ingredients = [];
 
-  Future<void> _buildTestList() async {
+  Future<void> _buildRecipe() async {
     var recipe = await dataclass.parseRecipeJson(widget.url);
     setState(() {
       for (dataclass.RecipeDetail r in recipe.recipeDetail){
@@ -192,7 +191,6 @@ class _RecipeScreenState extends State<RecipeScreen> {
         }
       }
     });
-    print(ingredients[3]);
   }
   void _itemSelectedCallBack(String name) async {
     dataclass.MomoItems selectedItem = await Navigator.push(context, MaterialPageRoute(
@@ -203,21 +201,19 @@ class _RecipeScreenState extends State<RecipeScreen> {
   @override
   void initState(){
     super.initState();
-    _buildTestList();
+    _buildRecipe();
   }
 
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context).settings.arguments as String;
-    print(args);
     return MainFrame(
-      title: widget.title,
+      title: widget.name,
       body: Center(child:buildRecipeScreen(context)),
     );
   }
 
   CenterBox buildRecipeScreen(BuildContext context) {
-    return CenterBox(ingredients: ingredients);
+    return CenterBox(ingredients: ingredients, name: widget.name, imgUrl: widget.imgUrl);
   }
 }
 class MainFrame extends StatelessWidget {
@@ -265,10 +261,11 @@ class MainFrame extends StatelessWidget {
 class CenterBox extends StatefulWidget {
   const CenterBox({
     Key key,
-    @required this.ingredients,
+    @required this.ingredients, this.name, this.imgUrl
   }) : super(key: key);
 
   final List<Widget> ingredients;
+  final String name, imgUrl;
 
   @override
   _CenterBoxState createState() => _CenterBoxState();
@@ -294,8 +291,7 @@ class _CenterBoxState extends State<CenterBox> {
           children: [
           Expanded(
             flex: 2,
-            // TODO: Here to change food image
-            child: buildLeftColumn('https://imageproxy.icook.network/resize?background=255%2C255%2C255&height=600&nocrop=false&stripmeta=true&type=auto&url=http%3A%2F%2Ftokyo-kitchen.icook.tw.s3.amazonaws.com%2Fuploads%2Frecipe%2Fcover%2F351486%2Fd8148f07fe50e2d1.jpg&width=600'),
+            child: buildLeftColumn(widget.name, widget.imgUrl),
           ),
           Expanded(
             child: Column(
@@ -312,10 +308,9 @@ class _CenterBoxState extends State<CenterBox> {
       );
   }
 
-  Container buildLeftColumn(String url) {
+  Container buildLeftColumn(String name, String url) {
     String _parseUrl(String oriUrl){
-      var reavelUrl = oriUrl.split("url=")[1].split('width=')[0];
-      return env['CORS_PROXY'] + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
+      return env['CORS_PROXY'] + oriUrl;
     }
     return Container(
       child: Column(
@@ -324,7 +319,7 @@ class _CenterBoxState extends State<CenterBox> {
           children: [
             Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text("Food Name",
+                child: Text(name,
                     style: TextStyle(
                       fontWeight: FontWeight.w800,
                       letterSpacing: 0.5,
