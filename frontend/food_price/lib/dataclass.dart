@@ -9,6 +9,47 @@ import 'package:flutter/material.dart';
 part 'dataclass.g.dart';
 
 @JsonSerializable()
+class RecipeSearch {
+  List<RecipeSummary> recipes;
+
+  RecipeSearch({this.recipes});
+
+  factory RecipeSearch.fromJson(Map<String, dynamic> json) => _$RecipeSearchFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeSearchToJson(this);
+}
+
+@JsonSerializable()
+class RecipeSummary {
+  String url;
+  String name;
+  String description;
+  @JsonKey(name: 'image_url')
+  String imageUrl;
+
+  RecipeSummary({this.url, this.name, this.description, this.imageUrl});
+
+  factory RecipeSummary.fromJson(Map<String, dynamic> json) => _$RecipeSummaryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$RecipeSummaryToJson(this);
+}
+
+Future<RecipeSearch> searchRecipes(String name, int page) async {
+  final uri = "${env['RECIPE_SEARCH_API']}?text=$name&page=$page";
+  final response = await http.get(
+    Uri.parse(uri),
+  );
+  if (response.statusCode == 200) {
+    return RecipeSearch.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+  } else {
+    throw HttpException(
+        'Unexpected status code ${response.statusCode}:'
+            ' ${response.reasonPhrase}',
+        uri: Uri.parse(uri));
+  }
+}
+
+@JsonSerializable()
 class Ingredient {
   String name;
   String unit;
@@ -35,7 +76,7 @@ class RecipeDetail {
 
 @JsonSerializable()
 class Recipe {
-  @JsonKey(name: 'resipe_detail')
+  @JsonKey(name: 'recipe_detail')
   List<RecipeDetail> recipeDetail;
 
   Recipe({this.recipeDetail});
@@ -44,12 +85,20 @@ class Recipe {
   Map<String, dynamic> toJson() => _$RecipeToJson(this);
 }
 
-Future<Recipe> parseRecipeJson() async {
-  var jsonText = await rootBundle.loadString('result.json');
-  // print(json.decode(jsonText));
-  var recipes = Recipe.fromJson(json.decode(jsonText));
-  print(recipes.recipeDetail.last.ingredients.first.name);
-  return recipes;
+Future<Recipe> parseRecipeJson(String url) async {
+  final api = "${env['RECIPE_DETAIL_API']}?url=$url";
+  final response = await http.get(
+    Uri.parse(api),
+  );
+  if (response.statusCode == 200) {
+    var recipes = Recipe.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+    return recipes;
+  } else {
+    throw HttpException(
+        'Unexpected status code ${response.statusCode}:'
+            ' ${response.reasonPhrase}',
+        uri: Uri.parse(api));
+  }
 }
 
 // 食材搜尋解析
@@ -92,10 +141,11 @@ class MomoItems {
 }
 
 Future<MomoIngredients> getIngredientsFromMomo(String ingredient) async {
-  final api = env['INGREDIENT_API'];
+  final api = env.containsKey('INGREDIENT_API_ALTER') ? env['INGREDIENT_API_ALTER'] : env['INGREDIENT_API'];
   final response = await http.get(
       Uri.parse(api+ingredient),
   );
+  print(response);
   if (response.statusCode == 200) {
     return MomoIngredients.fromJson(json.decode(utf8.decode(response.bodyBytes)));
   } else {
@@ -106,12 +156,9 @@ Future<MomoIngredients> getIngredientsFromMomo(String ingredient) async {
   }
 }
 
-Image corsImage(String url){
+Image corsImage(String url, double width){
   return Image.network(
     env['CORS_PROXY']+url,
-    width: 30,
+    width: width,
     headers: {'X-Requested-With':'XMLHttpRequest'},);
-}
-void main(){
-  parseRecipeJson();
 }

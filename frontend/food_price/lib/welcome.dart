@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pickitem.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'dart:ui' as ui;
 import 'dataclass.dart' as dataclass;
 
 
-class WelcomeScreen extends StatefulWidget {
+class RecipeScreen extends StatefulWidget {
+  final String url;
+  RecipeScreen(this.url);
+
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  _RecipeScreenState createState() => _RecipeScreenState(this.url);
 }
 class IngredientTile extends StatelessWidget {
-  IngredientTile([this.title = 'Oeschinen Lake Campground' , this.subtitle = 'Kandersteg, Switzerland']);
+  IngredientTile([this.title = 'Oeschinen Lake Campground', this.subtitle = 'Kandersteg, Switzerland']);
   final String title;
   final String subtitle;
 
@@ -54,7 +58,10 @@ class IngredientTile extends StatelessWidget {
   }
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _RecipeScreenState extends State<RecipeScreen> {
+  final String url;
+  _RecipeScreenState(this.url);
+
   Widget buildHomePage(String title) {
     final subTitle = Text(
       'Pavlova is a meringue-based dessert named after the Russian ballerina '
@@ -165,9 +172,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   List<Widget> ingredients = [];
 
   Future<void> _buildTestList() async {
-    var testrecipe = await dataclass.parseRecipeJson();
+    var recipe = await dataclass.parseRecipeJson(this.url);
     setState(() {
-      for (dataclass.RecipeDetail r in testrecipe.recipeDetail){
+      for (dataclass.RecipeDetail r in recipe.recipeDetail){
         if (r.ingredients.isNotEmpty){
           ingredients.add(
               Padding(
@@ -192,6 +199,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as String;
+    print(args);
     return MainFrame(
       body: Center(child:buildRecipeScreen(context)),
     );
@@ -203,9 +212,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 }
 class MainFrame extends StatelessWidget {
   const MainFrame({
-    Key key, this.body
+    Key key, this.body, this.nextPage
   }) : super(key: key);
   final Widget body;
+  final Widget nextPage;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -223,13 +233,15 @@ class MainFrame extends StatelessWidget {
             children: <Widget>[
               FloatingActionButton.extended(
                 heroTag: null,
-                label: Text('test'),
+                label: Text('上一頁'),
                 onPressed: ()=> Navigator.pop(context),
                 icon: Icon(Icons.navigate_before),
               ),
               FloatingActionButton.extended(
-                label: Text('test'),
-                onPressed: () {},
+                label: Text('下一頁'),
+                onPressed: ()=> (nextPage != null) ? Navigator.push(
+                    context, MaterialPageRoute(builder: (context)=> nextPage))
+                : null, // TODO: put next step in it.
                 icon: Icon(Icons.navigate_next),
                 )
               ],
@@ -292,7 +304,7 @@ class _CenterBoxState extends State<CenterBox> {
   Container buildLeftColumn(String url) {
     String _parseUrl(String oriUrl){
       var reavelUrl = oriUrl.split("url=")[1].split('width=')[0];
-      return 'http://128.199.227.138:9527/' + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
+      return env['CORS_PROXY'] + Uri.decodeFull(reavelUrl.substring(0, reavelUrl.length-1));
     }
     return Container(
       child: Column(

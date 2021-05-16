@@ -6,6 +6,38 @@ part of 'dataclass.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+RecipeSearch _$RecipeSearchFromJson(Map<String, dynamic> json) {
+  return RecipeSearch(
+    recipes: (json['recipes'] as List)
+        ?.map((e) => e == null
+            ? null
+            : RecipeSummary.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$RecipeSearchToJson(RecipeSearch instance) =>
+    <String, dynamic>{
+      'recipes': instance.recipes,
+    };
+
+RecipeSummary _$RecipeSummaryFromJson(Map<String, dynamic> json) {
+  return RecipeSummary(
+    url: json['url'] as String,
+    name: json['name'] as String,
+    description: json['description'] as String,
+    imageUrl: json['image_url'] as String,
+  );
+}
+
+Map<String, dynamic> _$RecipeSummaryToJson(RecipeSummary instance) =>
+    <String, dynamic>{
+      'url': instance.url,
+      'name': instance.name,
+      'description': instance.description,
+      'image_url': instance.imageUrl,
+    };
+
 Ingredient _$IngredientFromJson(Map<String, dynamic> json) {
   return Ingredient(
     name: json['name'] as String,
@@ -37,7 +69,7 @@ Map<String, dynamic> _$RecipeDetailToJson(RecipeDetail instance) =>
 
 Recipe _$RecipeFromJson(Map<String, dynamic> json) {
   return Recipe(
-    recipeDetail: (json['resipe_detail'] as List)
+    recipeDetail: (json['recipe_detail'] as List)
         ?.map((e) =>
             e == null ? null : RecipeDetail.fromJson(e as Map<String, dynamic>))
         ?.toList(),
@@ -45,7 +77,7 @@ Recipe _$RecipeFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$RecipeToJson(Recipe instance) => <String, dynamic>{
-      'resipe_detail': instance.recipeDetail,
+      'recipe_detail': instance.recipeDetail,
     };
 
 MomoIngredients _$MomoIngredientsFromJson(Map<String, dynamic> json) {

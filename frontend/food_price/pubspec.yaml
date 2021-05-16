@@ -32,6 +32,7 @@ dependencies:
   http: ^0.13.1
   expansion_tile_card: ^2.0.0
   flutter_dotenv: ^3.1.0
+  google_fonts: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -48,6 +49,7 @@ flutter:
   assets:
     - assets/testfood.jpg
     - result.json
+    - .env
 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
