@@ -35,7 +35,7 @@ class RecipeSummary {
 }
 
 Future<RecipeSearch> searchRecipes(String name, int page) async {
-  final uri = "${env['RECIPE_API']}?text=$name&page=$page";
+  final uri = "${env['RECIPE_SEARCH_API']}?text=$name&page=$page";
   final response = await http.get(
     Uri.parse(uri),
   );
@@ -76,7 +76,7 @@ class RecipeDetail {
 
 @JsonSerializable()
 class Recipe {
-  @JsonKey(name: 'resipe_detail')
+  @JsonKey(name: 'recipe_detail')
   List<RecipeDetail> recipeDetail;
 
   Recipe({this.recipeDetail});
@@ -85,12 +85,20 @@ class Recipe {
   Map<String, dynamic> toJson() => _$RecipeToJson(this);
 }
 
-Future<Recipe> parseRecipeJson() async {
-  var jsonText = await rootBundle.loadString('result.json');
-  // print(json.decode(jsonText));
-  var recipes = Recipe.fromJson(json.decode(jsonText));
-  print(recipes.recipeDetail.last.ingredients.first.name);
-  return recipes;
+Future<Recipe> parseRecipeJson(String url) async {
+  final api = "${env['RECIPE_DETAIL_API']}?url=$url";
+  final response = await http.get(
+    Uri.parse(api),
+  );
+  if (response.statusCode == 200) {
+    var recipes = Recipe.fromJson(json.decode(utf8.decode(response.bodyBytes)));
+    return recipes;
+  } else {
+    throw HttpException(
+        'Unexpected status code ${response.statusCode}:'
+            ' ${response.reasonPhrase}',
+        uri: Uri.parse(api));
+  }
 }
 
 // 食材搜尋解析
@@ -152,7 +160,4 @@ Image corsImage(String url){
     env['CORS_PROXY']+url,
     width: 30,
     headers: {'X-Requested-With':'XMLHttpRequest'},);
-}
-void main(){
-  parseRecipeJson();
 }

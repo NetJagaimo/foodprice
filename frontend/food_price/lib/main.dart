@@ -30,7 +30,6 @@ class MyApp extends StatelessWidget {
       //home: MyHomePage(title: 'Flutter Demo Home Page'),
       routes: {
         '/': (context) => MyHomePage(title: 'Recipe Link'),
-        '/welcome': (context) => WelcomeScreen(),
       },
     );
   }
@@ -82,10 +81,6 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  void _handleSubmitted(String text) {
-    Navigator.of(context).pushNamed('/welcome');
-  }
-
   Widget _buildTextComposer() {
     return IconTheme(
       data: IconThemeData(color: Theme.of(context).accentColor),
@@ -106,7 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   },
                   focusNode: _focusNode,
                   controller: _textController,
-                  onSubmitted: _isComposing ? _handleSubmitted : null,
                   decoration:
                   InputDecoration(
                     contentPadding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 10),
@@ -126,6 +120,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
+    );
+  }
+
+  void _handleClickSearchResult(String url) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (BuildContext context) => RecipeScreen(url))
     );
   }
 
@@ -163,36 +163,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 child:  _shownRecipes.length > 0
                     ? ListView.builder(
                   itemCount: _shownRecipes.length,
-                  itemBuilder: (context, index) => Card(
-                    key: ValueKey(index),
-                    color: Colors.white,
-                    elevation: 4,
-                    margin: EdgeInsets.symmetric(vertical: 10),
-                    child:Padding(
-                      padding: EdgeInsets.all(25.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            flex: 22,
-                            child: Image.network(
-                                DotEnv.env['CORS_PROXY'] + _shownRecipes[index].imageUrl,
-                                headers: {'X-Requested-With':'XMLHttpRequest'},
-                                fit: BoxFit.cover),
-                          ),
-                          SizedBox(width: 50),
-                          Expanded(
-                            flex: 78,
-                            child: Column(
-                              children: [
-                                Text(_shownRecipes[index].name,
-                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-                                SizedBox(height: 10),
-                                Text(_shownRecipes[index].description,
-                                    style: TextStyle(fontSize: 16)),
-                              ],
+                  itemBuilder: (context, index) => InkWell(
+                    onTap: () {
+                      _handleClickSearchResult(_shownRecipes[index].url);
+                    },
+                    child: Card(
+                      key: ValueKey(index),
+                      color: Colors.white,
+                      elevation: 4,
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child:Padding(
+                        padding: EdgeInsets.all(25.0),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              flex: 22,
+                              child: Image.network(
+                                  DotEnv.env['CORS_PROXY'] + _shownRecipes[index].imageUrl,
+                                  headers: {'X-Requested-With':'XMLHttpRequest'},
+                                  fit: BoxFit.cover),
                             ),
-                          ),
-                        ],
+                            SizedBox(width: 50),
+                            Expanded(
+                              flex: 78,
+                              child: Column(
+                                children: [
+                                  Text(_shownRecipes[index].name,
+                                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+                                  SizedBox(height: 10),
+                                  Text(_shownRecipes[index].description,
+                                      style: TextStyle(fontSize: 16)),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

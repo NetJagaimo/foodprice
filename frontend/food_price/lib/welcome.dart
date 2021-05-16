@@ -6,12 +6,15 @@ import 'dart:ui' as ui;
 import 'dataclass.dart' as dataclass;
 
 
-class WelcomeScreen extends StatefulWidget {
+class RecipeScreen extends StatefulWidget {
+  final String url;
+  RecipeScreen(this.url);
+
   @override
-  _WelcomeScreenState createState() => _WelcomeScreenState();
+  _RecipeScreenState createState() => _RecipeScreenState(this.url);
 }
 class IngredientTile extends StatelessWidget {
-  IngredientTile([this.title = 'Oeschinen Lake Campground' , this.subtitle = 'Kandersteg, Switzerland']);
+  IngredientTile([this.title = 'Oeschinen Lake Campground', this.subtitle = 'Kandersteg, Switzerland']);
   final String title;
   final String subtitle;
 
@@ -55,7 +58,10 @@ class IngredientTile extends StatelessWidget {
   }
 }
 
-class _WelcomeScreenState extends State<WelcomeScreen> {
+class _RecipeScreenState extends State<RecipeScreen> {
+  final String url;
+  _RecipeScreenState(this.url);
+
   Widget buildHomePage(String title) {
     final subTitle = Text(
       'Pavlova is a meringue-based dessert named after the Russian ballerina '
@@ -166,7 +172,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   List<Widget> ingredients = [];
 
   Future<void> _buildTestList() async {
-    var testrecipe = await dataclass.parseRecipeJson();
+    var testrecipe = await dataclass.parseRecipeJson(this.url);
     setState(() {
       for (dataclass.RecipeDetail r in testrecipe.recipeDetail){
         if (r.ingredients.isNotEmpty){
@@ -193,6 +199,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context).settings.arguments as String;
+    print(args);
     return MainFrame(
       body: Center(child:buildRecipeScreen(context)),
     );

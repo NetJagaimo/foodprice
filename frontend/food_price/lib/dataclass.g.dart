@@ -69,7 +69,7 @@ Map<String, dynamic> _$RecipeDetailToJson(RecipeDetail instance) =>
 
 Recipe _$RecipeFromJson(Map<String, dynamic> json) {
   return Recipe(
-    recipeDetail: (json['resipe_detail'] as List)
+    recipeDetail: (json['recipe_detail'] as List)
         ?.map((e) =>
             e == null ? null : RecipeDetail.fromJson(e as Map<String, dynamic>))
         ?.toList(),
@@ -77,7 +77,7 @@ Recipe _$RecipeFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$RecipeToJson(Recipe instance) => <String, dynamic>{
-      'resipe_detail': instance.recipeDetail,
+      'recipe_detail': instance.recipeDetail,
     };
 
 MomoIngredients _$MomoIngredientsFromJson(Map<String, dynamic> json) {
