@@ -1,6 +1,7 @@
 import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'welcome.dart';
 import 'dataclass.dart' as dataclass;
 
@@ -30,9 +31,12 @@ class _PickItemScreenState extends State<PickItemScreen> {
   
   Widget _buildItemTile(dataclass.MomoItems item){
     return InkWell(
-      onTap: (){
-        Navigator.pop(context, item);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(item.link)));
+      onTap: () async {
+        if (await canLaunch(item.link)){
+          await launch(item.link);
+        }
+        // Navigator.pop(context, item);
+        // ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(item.link)));
       },
       child: Card(
         child: Column(children: [
@@ -62,7 +66,7 @@ class _PickItemScreenState extends State<PickItemScreen> {
           mainAxisSpacing: 10,
           crossAxisCount: 3,
         ),
-        itemCount: 6, //_itemnames.length, // TODO: To be changed in prod
+        itemCount: _itemnames.length, // TODO: To be changed in prod
         itemBuilder: (_,int idx)=>_buildItemTile(_itemnames[idx]))
         : CenterLoadingAnimation(context: context);
   }
@@ -88,14 +92,20 @@ class _PickItemScreenState extends State<PickItemScreen> {
             padding: const EdgeInsets.all(8.0),
             child: Column(children: [
               Row(children: [
-                Icon(Icons.shopping_bag,size: 30,),
-                Text(widget.ingredientName,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.5,
-                    fontSize: 30,
+                  Row(
+                    children: [
+                    Icon(Icons.shopping_bag,size: 30,),
+                    Text(widget.ingredientName,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: 0.5,
+                        fontSize: 30,
+                      ),
+                    )],
                   ),
-                )],
+                Spacer(),
+                Text('個數：'+_itemnames.length.toString())
+                ],
               ),
               Divider(),
               Expanded(child: _buildGridViewOrLoading())
