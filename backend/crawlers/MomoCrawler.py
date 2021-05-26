@@ -24,14 +24,17 @@ class MomoCrawler:
                 EC.presence_of_all_elements_located((By.CSS_SELECTOR, '#BodyBase > div.bt_2_layout.searchbox.searchListArea.selectedtop > div.searchPrdListArea.bookList > div.listArea > ul > li'))
             )
         except:
-            print('error timeout')
+            return [{}]
 
         datas = []
 
         for result in results:
             link = result.find_element_by_css_selector('.goodsUrl').get_attribute('href')
             name = result.find_element_by_css_selector('.prdName').text
-            price = int(result.find_element_by_css_selector('.price b').text.replace(',', ''))
+            try: 
+                price = int(result.find_element_by_css_selector('.price b').text.replace(',', ''))
+            except:
+                price = -1
             
             kg = self.extract_kg_from_name(name)
             if kg <= 0:
